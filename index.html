@@ -68,7 +68,7 @@
         <!-- ===== 主屏幕 ===== -->
         <div class="screen home-screen" id="homeScreen">
             <div class="home-bg"></div>
-
+            
             <!-- 顶部状态栏 -->
             <div class="status-bar">
                 <span class="status-time" id="statusTime">00:00</span>
@@ -78,7 +78,7 @@
                     <svg width="27" height="12" viewBox="0 0 27 12"><rect x="0" y="1" width="23" height="10" rx="2" stroke="#fff" stroke-width="1" fill="none"/><rect x="24" y="4" width="2" height="4" rx="0.5" fill="#fff"/><rect x="1.5" y="2.5" width="18" height="7" rx="1" fill="#34C759"/></svg>
                 </span>
             </div>
-
+            
             <!-- 小组件区域 -->
             <div class="widgets">
                 <div class="widget widget-calendar" data-app="calendar">
@@ -97,51 +97,44 @@
                 </div>
             </div>
 
-            <!-- 翻页区域 -->
+            <!-- 翻页区域 (增加 touch-action 以修复无法滑动问题) -->
             <div class="pages-container" id="pagesContainer" style="touch-action: pan-y;">
-
-                <!-- 第一页 -->
+                
+                <!-- 第一页：上方两行，避开Dock图标 -->
                 <div class="page" id="page1">
                     <div class="app-grid">
-                        <div class="app-item" data-app="phone"><img src="icons/icon_phone.png" alt="电话"><span>电话</span></div>
                         <div class="app-item" data-app="messages"><img src="icons/icon_messages.png" alt="信息"><span>信息</span></div>
                         <div class="app-item" data-app="mail"><img src="icons/icon_mail.png" alt="邮件"><span>邮件</span></div>
                         <div class="app-item" data-app="notes"><img src="icons/icon_notes.png" alt="备忘录"><span>备忘录</span></div>
-
                         <div class="app-item" data-app="camera"><img src="icons/icon_camera.png" alt="相机"><span>相机</span></div>
+                        
                         <div class="app-item" data-app="instagram"><img src="icons/icon_instagram.png" alt="Instagram"><span>Instagram</span></div>
+                        <div class="app-item" data-app="browser"><img src="icons/icon_browser.png" alt="浏览器"><span>浏览器</span></div>
                         <div class="app-item" data-app="settings"><img src="icons/icon_settings.png" alt="设置"><span>设置</span></div>
-                        <div class="app-item app-item-empty"></div>
-
-                        <div class="app-item" data-app="contacts"><img src="icons/icon_contacts.png" alt="联系人"><span>联系人</span></div>
-                        <div class="app-item" data-app="photos"><img src="icons/icon_photos.png" alt="相册"><span>相册</span></div>
-                        <div class="app-item" data-app="voicememos"><img src="icons/icon_voice_memo.png" alt="录音"><span>录音</span></div>
                         <div class="app-item app-item-empty"></div>
                     </div>
                 </div>
-
-                <!-- 第二页 -->
+                
+                <!-- 第二页：KakaoTalk 和 X -->
                 <div class="page" id="page2">
                     <div class="app-grid">
                         <div class="app-item" data-app="x"><img src="icons/icon_x.png" alt="X"><span>X</span></div>
                         <div class="app-item" data-app="kakaotalk"><img src="icons/icon_kakaotalk.png" alt="KakaoTalk"><span>KakaoTalk</span></div>
-                        <div class="app-item" data-app="xiaohongshu"><img src="icons/icon_xiaohongshu.png" alt="小红书"><span>小红书</span></div>
-                        <div class="app-item app-item-empty"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 页面指示器 -->
+            <!-- 指示器 (移到上方，远离Dock) -->
             <div class="page-indicator">
                 <div class="dot active" data-page="0"></div>
                 <div class="dot" data-page="1"></div>
             </div>
 
-            <!-- 底部 Dock 栏 -->
+            <!-- 底部 Dock 栏 (常驻不变) -->
             <div class="dock">
                 <div class="app-item" data-app="phone"><img src="icons/icon_phone.png" alt="电话"></div>
                 <div class="app-item" data-app="messages"><img src="icons/icon_messages.png" alt="信息"></div>
-                <div class="app-item" data-app="contacts"><img src="icons/icon_contacts.png" alt="联系人"></div>
+                <div class="app-item" data-app="browser"><img src="icons/icon_browser.png" alt="浏览器"></div>
                 <div class="app-item" data-app="camera"><img src="icons/icon_camera.png" alt="相机"></div>
             </div>
         </div>
