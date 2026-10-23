@@ -101,3 +101,87 @@ body { background: #000; display: flex; justify-content: center; align-items: ce
 .shake { animation: shake 0.4s ease; }
 
 @media (max-width: 420px) { .phone-frame { width: 100vw; height: 100vh; border-radius: 0; box-shadow: none; } }
+/* ===== Upgrade pack: richer app surfaces and responsive polish ===== */
+.app-content { height: calc(100% - 112px); overflow-y: auto; overscroll-behavior: contain; padding: 14px 15px 34px; color: #1c1c1e; }
+.app-header { position: relative; z-index: 2; min-height: 112px; }
+.sim-app { min-height: 100%; padding-bottom: 24px; }
+.sim-app-subtitle { color: #8e8e93; font-size: 13px; margin: 0 2px 14px; }
+.sim-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin: 8px 0 14px; }
+.sim-btn { appearance:none; border:0; border-radius:12px; background:#007aff; color:#fff; padding:10px 13px; font:600 14px -apple-system,BlinkMacSystemFont,sans-serif; cursor:pointer; margin:4px 4px 4px 0; }
+.sim-btn:active { opacity:.7; transform:scale(.98); }
+.sim-btn.secondary { color:#007aff; background:#e8f2ff; }
+.sim-btn.danger { background:#ff3b30; }
+.sim-btn.green { background:#34c759; }
+.sim-list { background:#fff; border-radius:16px; overflow:hidden; margin:12px 0; box-shadow:0 1px 2px #00000008; }
+.sim-list-row { display:flex; align-items:center; gap:12px; width:100%; padding:13px 14px; border:0; border-bottom:1px solid #f0f0f2; background:#fff; text-align:left; color:#1c1c1e; font:inherit; cursor:pointer; }
+.sim-list-row:last-child { border-bottom:0; }
+.sim-list-row > span:nth-child(2) { flex:1; min-width:0; }
+.sim-list-row b,.sim-list-row small { display:block; overflow-wrap:anywhere; }
+.sim-list-row b { font-size:14px; font-weight:600; }
+.sim-list-row small { color:#8e8e93; font-size:12px; margin-top:4px; }
+.sim-list-row audio { width:100%; margin-top:8px; }
+.sim-row-icon { display:grid; place-items:center; width:38px; height:38px; flex-shrink:0; border-radius:12px; background:#f2f2f7; font-size:20px; }
+.sim-empty { text-align:center; color:#8e8e93; padding:32px 12px; }
+.sim-empty > div { font-size:42px; margin-bottom:12px; }
+.sim-empty strong { display:block; color:#48484a; font-size:16px; }
+.sim-empty p,.sim-muted { font-size:12px; line-height:1.6; color:#8e8e93; margin:10px 2px; }
+.editor-card,.sim-card { background:#fff; border-radius:16px; padding:14px; margin:12px 0; box-shadow:0 1px 3px #0000000a; }
+.sim-field { display:block; color:#636366; font-size:12px; margin:9px 0 12px; }
+.sim-field input,.sim-field textarea,.sim-search { display:block; width:100%; border:1px solid #e5e5ea; background:#f8f8fa; border-radius:10px; padding:11px; margin-top:6px; font:15px -apple-system,BlinkMacSystemFont,sans-serif; color:#1c1c1e; outline:none; user-select:text; }
+.sim-field textarea { resize:vertical; min-height:70px; }
+.sim-search { margin:10px 0; }
+.contact-avatar { flex-shrink:0; width:40px; height:40px; border-radius:50%; background:linear-gradient(145deg,#a7d8ff,#697bff); color:white; display:grid; place-items:center; font-size:19px; }
+.settings-profile,.social-profile { display:flex; align-items:center; gap:14px; background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; }
+.profile-avatar,.social-avatar { width:52px; height:52px; display:grid; place-items:center; border-radius:50%; background:#e8e8ed; font-size:26px; }
+.settings-profile p,.social-profile p { color:#8e8e93; font-size:12px; margin-top:5px; }
+.setting-row { display:flex; justify-content:space-between; align-items:center; padding:14px; background:#fff; border-bottom:1px solid #f0f0f2; font-size:14px; }
+.setting-row input { accent-color:#34c759; width:42px; height:24px; }
+.photo-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; }
+.photo-tile { aspect-ratio:1; position:relative; overflow:hidden; background:#e5e5ea; }
+.photo-tile img { width:100%; height:100%; object-fit:cover; }
+.photo-tile button { position:absolute; top:4px; right:4px; border:0; background:#0008; color:#fff; border-radius:50%; width:23px; height:23px; font-size:18px; }
+.upload-label { display:inline-flex; align-items:center; margin:0; }
+.voice-card { background:linear-gradient(145deg,#f8e7ec,#e8eaff); border-radius:22px; text-align:center; padding:24px 14px; }
+.voice-orb { width:92px; height:92px; display:grid; place-items:center; border-radius:50%; background:#ff3b30; color:#fff; font-size:38px; margin:0 auto 18px; box-shadow:0 10px 30px #ff3b3030; }
+.voice-card h2 { font-size:20px; margin:8px 0; }
+.voice-card p { color:#777; font-size:12px; line-height:1.6; }
+.voice-controls { margin-top:14px; }
+.camera-stage { text-align:center; padding-top:18px; }
+.camera-preview { height:330px; border-radius:24px; background:linear-gradient(145deg,#25252a,#09090b); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:42px; overflow:hidden; }
+.camera-preview p { font-size:16px; margin-top:12px; }
+.camera-preview small { font-size:12px; color:#aaa; margin-top:8px; }
+.camera-result { width:100%; height:100%; object-fit:contain; }
+.shutter { width:74px; height:74px; display:grid; place-items:center; border:5px solid #d1d1d6; border-radius:50%; margin:22px auto; color:#ff3b30; font-size:50px; line-height:1; cursor:pointer; }
+.calendar-hero { padding:20px; border-radius:20px; color:#fff; background:linear-gradient(140deg,#ff6961,#ff3b30); display:flex; flex-direction:column; align-items:flex-start; }
+.calendar-hero strong { font-size:68px; line-height:1.1; }
+.calendar-hero span { font-size:14px; }
+.dial-display { min-height:64px; text-align:center; font-size:28px; padding:15px; overflow-wrap:anywhere; }
+.dial-pad { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:270px; margin:0 auto; }
+.dial-pad button { border:0; border-radius:50%; width:62px; height:62px; justify-self:center; background:#e5e5ea; font-size:24px; color:#1c1c1e; }
+.dial-actions { text-align:center; margin:16px; }
+.browser-form { display:flex; gap:8px; align-items:center; background:#fff; border-radius:14px; padding:8px; }
+.browser-form input { flex:1; min-width:0; border:0; outline:0; font-size:14px; padding:8px; user-select:text; }
+.browser-form button { border:0; background:#007aff; color:#fff; border-radius:10px; padding:9px; }
+.browser-shortcuts { display:flex; justify-content:space-around; margin:30px 0; }
+.browser-shortcuts button { border:0; background:transparent; display:flex; flex-direction:column; gap:8px; align-items:center; color:#333; }
+.browser-shortcuts span { display:grid; place-items:center; width:52px; height:52px; background:#fff; border-radius:16px; font-size:25px; }
+.browser-note { margin-top:36px; text-align:center; color:#777; font-size:14px; line-height:1.7; }
+.post-card { background:#fff; border-radius:16px; margin:12px 0; padding:14px; box-shadow:0 1px 3px #0000000a; }
+.post-author { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.post-card > p { font-size:14px; line-height:1.6; white-space:pre-wrap; overflow-wrap:anywhere; }
+.post-image { width:100%; max-height:280px; object-fit:cover; border-radius:12px; margin-top:10px; }
+.post-actions { display:flex; justify-content:space-between; margin-top:12px; }
+.post-actions button { border:0; background:transparent; color:#007aff; padding:6px; }
+.sim-toast { position:fixed; z-index:999; left:50%; bottom:28px; transform:translate(-50%,20px); background:#262626eF; color:#fff; padding:11px 16px; border-radius:24px; font-size:13px; opacity:0; pointer-events:none; transition:.2s; max-width:85vw; text-align:center; }
+.sim-toast.show { opacity:1; transform:translate(-50%,0); }
+.sim-dark .app-view { background:#1c1c1e; color:#f5f5f7; }
+.sim-dark .app-header { background:#242426; color:#f5f5f7; border-color:#444; }
+.sim-dark .app-content,.sim-dark .sim-app { color:#f5f5f7; }
+.sim-dark .sim-list,.sim-dark .sim-list-row,.sim-dark .editor-card,.sim-dark .sim-card,.sim-dark .settings-profile,.sim-dark .social-profile,.sim-dark .post-card,.sim-dark .setting-row { background:#2c2c2e; color:#f5f5f7; border-color:#444; }
+.sim-dark .sim-list-row small,.sim-dark .sim-muted { color:#aaa; }
+@media (max-width:420px) {
+ .app-content { height:calc(100% - 112px); padding:12px 12px 28px; }
+ .app-header { padding-top:58px; }
+ .sim-btn { padding:9px 11px; }
+ .camera-preview { height:300px; }
+}
