@@ -1,231 +1,591 @@
-* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-body { background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #1a1a2e;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+}
 
 .phone-frame {
-    width: 390px; height: 844px; background: #000; border-radius: 50px; position: relative; overflow: hidden;
-    box-shadow: 0 0 0 12px #1a1a1a, 0 0 0 14px #333, 0 20px 60px rgba(0,0,0,0.8);
+    position: relative;
+    width: 390px;
+    height: 844px;
+    background: #000;
+    border-radius: 50px;
+    overflow: hidden;
+    box-shadow: 0 0 0 3px #333, 0 20px 60px rgba(0,0,0,0.5);
 }
 
 .dynamic-island {
-    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    width: 120px; height: 35px; background: #000; border-radius: 20px; z-index: 100;
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 100;
 }
 
-.screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: all 0.4s ease; }
-.screen:not(.active) { opacity: 0; pointer-events: none; transform: scale(0.95); }
+/* ===== 通用屏幕 ===== */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
 
-/* ===== 新版锁屏样式 ===== */
-.lock-bg {
-    width: 100%; height: 100%; 
-    background: url('wallpapers/wallpaper_lock.jpg') center/cover no-repeat;
+.screen.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* ===== 状态栏 ===== */
+.status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 28px 0;
+    z-index: 50;
+    height: 54px;
 }
 
 .lock-status-bar {
-    position: absolute; top: 14px; width: 100%; padding: 0 30px;
-    display: flex; justify-content: space-between; color: #fff; font-size: 15px; font-weight: 600; z-index: 10;
+    padding-top: 56px;
+}
+
+.status-time {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.status-icons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+/* ===== 锁屏 ===== */
+.lock-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    z-index: 0;
 }
 
 .lock-content {
-    position: absolute; top: 0; width: 100%; height: 100%;
-    display: flex; flex-direction: column; align-items: center;
-    padding-top: 100px;
-    color: #fff; text-align: center;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 120px;
+    color: #fff;
 }
 
 .lock-icon-svg {
-    margin-bottom: 15px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    margin-bottom: 12px;
+    opacity: 0.9;
 }
 
 .lock-date-top {
-    font-size: 18px; font-weight: 500; opacity: 0.9;
-    margin-bottom: 5px; letter-spacing: 0.5px;
+    font-size: 18px;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-bottom: 4px;
 }
 
-.lock-time { 
-    font-size: 82px; font-weight: 600; letter-spacing: -3px; line-height: 1;
-    text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+.lock-time {
+    font-size: 72px;
+    font-weight: 200;
+    letter-spacing: 2px;
+    line-height: 1;
 }
 
 .lock-hint {
-    position: absolute; bottom: 100px;
-    font-size: 14px; opacity: 0.7; letter-spacing: 0.5px;
-    animation: hintPulse 2.5s ease-in-out infinite;
+    margin-top: 24px;
+    font-size: 14px;
+    opacity: 0.5;
+    animation: pulse 2s ease-in-out infinite;
 }
 
-@keyframes hintPulse {
-    0%, 100% { opacity: 0.5; transform: translateY(0); }
-    50% { opacity: 1; transform: translateY(-3px); }
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
 }
 
+/* 锁屏底部按钮 */
 .lock-bottom-actions {
-    position: absolute; bottom: 40px; left: 40px; right: 40px;
-    display: flex; justify-content: space-between; align-items: center;
-    z-index: 20;
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 48px;
+    z-index: 10;
 }
 
 .lock-action-btn {
-    width: 50px; height: 50px; border-radius: 50%;
-    background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
-    border: none; color: #fff; cursor: pointer;
-    display: flex; justify-content: center; align-items: center;
-    transition: all 0.2s ease;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
+
 .lock-action-btn:active {
-    background: rgba(255,255,255,0.4); transform: scale(0.9);
+    background: rgba(255, 255, 255, 0.3);
 }
-.lock-action-btn svg { width: 22px; height: 22px; }
 
-/* 密码遮罩层与键盘居中 */
+/* 密码键盘遮罩 */
 .passcode-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.3); backdrop-filter: blur(20px);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 30;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(20px);
+    z-index: 20;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 60px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
-.passcode-overlay.show { opacity: 1; pointer-events: auto; }
 
-/* 【重点修复】密码输入框容器：强制文字居中 */
+.passcode-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
 .passcode-box {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 强制内部所有元素水平居中 */
+    padding: 0 30px 40px;
     text-align: center;
 }
 
 .passcode-title {
     color: #fff;
-    font-size: 18px;
-    margin-bottom: 20px;
-    width: 100%;
+    font-size: 17px;
+    font-weight: 500;
+    margin-bottom: 16px;
 }
 
 .passcode-dots {
     display: flex;
-    gap: 15px;
-    margin-bottom: 30px;
     justify-content: center;
+    gap: 18px;
+    margin-bottom: 12px;
 }
+
 .passcode-dots span {
-    width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #fff; transition: all 0.2s;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid #fff;
+    transition: background 0.15s;
 }
-.passcode-dots span.filled { background: #fff; }
+
+.passcode-dots span.filled {
+    background: #fff;
+}
 
 .passcode-error {
-    color: #ff3b30;
-    font-size: 14px;
+    color: #ff453a;
+    font-size: 13px;
     height: 20px;
     margin-bottom: 10px;
     opacity: 0;
     transition: opacity 0.2s;
 }
-.passcode-error.show { opacity: 1; }
 
-/* 核心修复：强制键盘等宽并居中 */
-.keypad { 
-    display: grid; 
-    grid-template-columns: repeat(3, 75px); 
-    gap: 15px; 
-    justify-content: center; 
-    margin-bottom: 20px;
+.passcode-error.show {
+    opacity: 1;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 300px;
+    margin: 0 auto;
 }
 
 .key {
-    width: 75px; 
-    height: 75px; 
-    border-radius: 50%; 
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
     border: none;
-    background: rgba(255,255,255,0.15); 
-    color: #fff; 
-    font-size: 28px; 
+    color: #fff;
+    font-size: 30px;
     font-weight: 300;
-    cursor: pointer; 
-    transition: background 0.15s;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0 auto;
+    transition: background 0.15s;
 }
-.key:active { background: rgba(255,255,255,0.4); }
-.key-empty { background: transparent !important; pointer-events: none; }
-.key-delete { font-size: 22px; background: transparent !important; }
 
-/* ===== 主屏幕样式 ===== */
+.key:active {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.key-empty {
+    background: transparent;
+    pointer-events: none;
+}
+
+.key-delete {
+    font-size: 22px;
+}
+
+/* ===== 主屏幕 ===== */
 .home-bg {
-    width: 100%; height: 100%; background: url('wallpapers/wallpaper_home.jpg') center/cover no-repeat;
-}
-.status-bar {
-    position: absolute; top: 14px; width: 100%; padding: 0 30px;
-    display: flex; justify-content: space-between; color: #fff; font-size: 15px; font-weight: 600; z-index: 10;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(160deg, #1a1a2e, #16213e, #0f3460);
+    z-index: 0;
 }
 
+/* 小组件 */
 .widgets {
-    position: absolute; top: 70px; width: 100%; padding: 0 20px;
-    display: flex; gap: 12px; z-index: 5;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    gap: 14px;
+    padding: 70px 20px 0;
 }
+
 .widget {
-    flex: 1; background: rgba(255,255,255,0.25); backdrop-filter: blur(20px);
-    border-radius: 18px; padding: 12px; color: #fff;
+    flex: 1;
+    height: 80px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    color: #fff;
+    cursor: pointer;
 }
-.widget-cal-day { font-size: 28px; font-weight: 700; }
-.widget-cal-info { font-size: 12px; opacity: 0.9; line-height: 1.4; display: flex; flex-direction: column;}
-.widget-weather { display: flex; align-items: center; gap: 10px; }
-.widget-weather-icon { font-size: 28px; }
-.widget-temp { font-size: 24px; font-weight: 600; display: block; }
-.widget-city { font-size: 12px; opacity: 0.9; }
+
+.widget-calendar {
+    flex-direction: row;
+}
+
+.widget-cal-day {
+    font-size: 36px;
+    font-weight: 200;
+    margin-right: 10px;
+    line-height: 1;
+}
+
+.widget-cal-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.widget-weather {
+    justify-content: space-between;
+}
+
+.widget-weather-icon {
+    font-size: 28px;
+}
+
+.widget-weather-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.widget-temp {
+    font-size: 22px;
+    font-weight: 300;
+}
+
+.widget-city {
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+/* 应用网格 */
+.app-grid-wrapper {
+    position: relative;
+    z-index: 10;
+    padding: 20px 20px 0;
+    flex: 1;
+}
 
 .app-grid {
-    position: absolute; top: 200px; width: 100%; padding: 0 20px;
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; z-index: 5;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px 12px;
+    margin-bottom: 20px;
 }
+
 .app-item {
-    display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer;
-    transition: transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
 }
-.app-item:active { transform: scale(0.85); }
-.app-item img { width: 58px; height: 58px; border-radius: 14px; object-fit: cover; }
-.app-item span { color: #fff; font-size: 11px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
+.app-item img {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    object-fit: cover;
+}
+
+.app-item span {
+    font-size: 11px;
+    color: #fff;
+    text-align: center;
+}
+
+/* 页面指示点 */
 .page-dots {
-    position: absolute; bottom: 110px; width: 100%; display: flex; justify-content: center; gap: 6px; z-index: 5;
+    position: absolute;
+    bottom: 110px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 10;
 }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); }
-.dot.active { background: #fff; }
 
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.dot.active {
+    background: #fff;
+}
+
+/* Dock 栏 */
 .dock {
-    position: absolute; bottom: 25px; left: 20px; right: 20px;
-    background: rgba(255,255,255,0.2); backdrop-filter: blur(25px);
-    border-radius: 30px; padding: 15px 10px; display: flex; justify-content: space-around; z-index: 5;
+    position: absolute;
+    bottom: 20px;
+    left: 14px;
+    right: 14px;
+    height: 90px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+    z-index: 10;
 }
-.dock .app-item span { display: none; }
 
-.home-bar {
-    position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
-    width: 130px; height: 5px; background: #fff; border-radius: 3px; z-index: 100;
+.dock .app-item img {
+    width: 56px;
+    height: 56px;
 }
 
-/* ===== App View ===== */
+.dock .app-item span {
+    display: none;
+}
+
+/* ===== 应用全屏视图 ===== */
 .app-view {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: #f2f2f7; z-index: 50; transform: translateY(100%); transition: transform 0.35s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 200;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
-.app-view.open { transform: translateY(0); }
+
+.app-view.active {
+    transform: translateY(0);
+}
+
 .app-header {
-    padding: 60px 20px 15px; background: rgba(242,242,247,0.9); backdrop-filter: blur(10px);
-    display: flex; align-items: center; gap: 10px; border-bottom: 0.5px solid rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    padding: 60px 16px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
-.back-btn { border: none; background: none; font-size: 18px; color: #007aff; cursor: pointer; }
-.app-title { font-size: 18px; font-weight: 600; }
 
-/* 抖动动画 */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-8px); }
-    40%, 80% { transform: translateX(8px); }
+.back-btn {
+    background: none;
+    border: none;
+    color: #0a84ff;
+    font-size: 17px;
+    cursor: pointer;
+    padding: 0;
 }
-.shake { animation: shake 0.4s ease; }
 
-/* 响应式 */
-@media (max-width: 420px) {
-    .phone-frame { width: 100vw; height: 100vh; border-radius: 0; box-shadow: none; }
+.app-title {
+    flex: 1;
+    text-align: center;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    margin-right: 50px;
+}
+
+.app-content {
+    height: calc(100% - 100px);
+    overflow-y: auto;
+    color: #fff;
+    padding: 16px;
+}
+
+/* ===== 日历 App ===== */
+.calendar-content {
+    padding: 12px 16px 40px;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.cal-nav-btn {
+    background: none;
+    border: none;
+    color: #0a84ff;
+    font-size: 22px;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cal-nav-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.cal-today-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #0a84ff;
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    margin-bottom: 14px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cal-header {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    padding: 8px 0;
+}
+
+.cal-day {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 15px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.cal-day.other-month {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.cal-day.today {
+    background: #0a84ff;
+    font-weight: 600;
+}
+
+.cal-day.has-event::after {
+    content: "";
+    display: block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ff3b30;
+    position: absolute;
+    bottom: 4px;
+}
+
+.cal-day {
+    position: relative;
+}
+
+.cal-add-today-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #0a84ff;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.cal-add-today-btn:active {
+    background: #0070e0;
 }
