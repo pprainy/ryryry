@@ -1,4 +1,4 @@
-// 获取DOM元素
+// ===== DOM 元素获取 =====
 const lockScreen = document.getElementById('lockScreen');
 const homeScreen = document.getElementById('homeScreen');
 const passcodeOverlay = document.getElementById('passcodeOverlay');
@@ -7,53 +7,65 @@ const passcodeError = document.getElementById('passcodeError');
 const keypad = document.querySelector('.keypad');
 const appView = document.getElementById('appView');
 const appTitle = document.getElementById('appTitle');
+const lockContent = document.querySelector('.lock-content');
+const lockHint = document.querySelector('.lock-hint');
+const btnFlashlight = document.getElementById('btnFlashlight');
+const btnCamera = document.getElementById('btnCamera');
 
-// 锁屏提示文字点击/滑动唤醒键盘
-document.querySelector('.lock-content').addEventListener('click', showPasscode);
-document.querySelector('.lock-hint').addEventListener('click', showPasscode);
+// ===== 状态变量 =====
+let currentPasscode = '';
+const CORRECT_CODE = '1107';
 
-// 底部按钮事件
-document.getElementById('btnFlashlight').addEventListener('click', (e) => {
+// ===== 基础交互逻辑 =====
+
+// 1. 显示密码键盘 (阻止点击事件冒泡，防止重复触发)
+function showPasscode(e) {
+    if(e) e.stopPropagation();
+    if (!passcodeOverlay.classList.contains('show')) {
+        passcodeOverlay.classList.add('show');
+        resetPasscode();
+    }
+}
+
+// 点击锁屏任意位置弹出键盘
+lockContent.addEventListener('click', showPasscode);
+lockHint.addEventListener('click', showPasscode);
+
+// 2. 底部快捷按钮 (阻止冒泡)
+btnFlashlight.addEventListener('click', (e) => {
     e.stopPropagation();
     alert('手电筒功能 (示例)');
 });
-document.getElementById('btnCamera').addEventListener('click', (e) => {
+btnCamera.addEventListener('click', (e) => {
     e.stopPropagation();
     alert('相机功能 (示例)');
 });
 
-// 显示密码键盘
-function showPasscode() {
-    passcodeOverlay.classList.add('show');
-}
-
-// 隐藏密码键盘
-function hidePasscode() {
-    passcodeOverlay.classList.remove('show');
-    resetPasscode();
-}
-
-// 密码逻辑
-let currentPasscode = '';
-const correctPasscode = '1234'; // 默认密码
-
+// 3. 数字键盘输入逻辑 (事件委托，性能最优)
 keypad.addEventListener('click', (e) => {
-    if (e.target.classList.contains('key') && !e.target.classList.contains('key-empty')) {
-        if (e.target.id === 'keyDelete') {
-            currentPasscode = currentPasscode.slice(0, -1);
-        } else {
-            if (currentPasscode.length < 4) {
-                currentPasscode += e.target.dataset.key;
-            }
+    // 查找最近的 .key 按钮，防止点到按钮中间的缝隙
+    const key = e.target.closest('.key');
+    if (!key || key.classList.contains('key-empty')) return;
+
+    if (key.id === 'keyDelete') {
+        // 删除操作
+        currentPasscode = currentPasscode.slice(0, -1);
+    } else {
+        // 输入操作 (最多输入4位)
+        if (currentPasscode.length < 4) {
+            currentPasscode += key.getAttribute('data-key');
         }
-        updateDots();
-        
-        if (currentPasscode.length === 4) {
-            setTimeout(checkPasscode, 200);
-        }
+    }
+
+    updateDots();
+
+    // 输入满 4 位时自动触发验证
+    if (currentPasscode.length === 4) {
+        setTimeout(checkPasscode, 150);
     }
 });
 
+// 4. 更新密码小圆点
 function updateDots() {
     for (let i = 0; i < passcodeDots.length; i++) {
         if (i < currentPasscode.length) {
@@ -64,21 +76,26 @@ function updateDots() {
     }
 }
 
+// 5. 验证密码逻辑
 function checkPasscode() {
-    if (currentPasscode === correctPasscode) {
-        // 解锁成功
-        hidePasscode();
-        lockScreen.classList.remove('active');
-        homeScreen.classList.add('active');
+    if (currentPasscode === CORRECT_CODE) {
+        // 密码正确：隐藏键盘，解锁进入主屏幕
+        passcodeOverlay.classList.remove('show');
+        resetPasscode();
+        setTimeout(() => {
+            lockScreen.classList.remove('active');
+            homeScreen.classList.add('active');
+        }, 200);
     } else {
-        // 密码错误
+        // 密码错误：显示错误提示并抖动
         passcodeError.classList.add('show');
         keypad.classList.add('shake');
+        
         setTimeout(() => {
             passcodeError.classList.remove('show');
             keypad.classList.remove('shake');
             resetPasscode();
-        }, 600);
+        }, 500);
     }
 }
 
@@ -87,47 +104,44 @@ function resetPasscode() {
     updateDots();
 }
 
-// 主屏幕App点击事件
+// ===== 应用程序打开/关闭 =====
 document.querySelectorAll('.app-item').forEach(item => {
     item.addEventListener('click', () => {
-        const appName = item.querySelector('span')?.textContent || item.dataset.app;
-        appTitle.textContent = appName;
+        const appName = item.querySelector('span')?.textContent || item.getAttribute('data-app');
+        appTitle.textContent = appName || '应用';
         appView.classList.add('open');
     });
 });
 
-// 返回按钮
 document.getElementById('backBtn').addEventListener('click', () => {
     appView.classList.remove('open');
 });
 
-// 更新时间与日期
+// ===== 实时时间与日期更新 =====
 function updateClock() {
     const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const timeStr = `${hours}:${minutes}`;
-    
-    const month = now.getMonth() + 1;
-    const day = now.getDate();
-    const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-    const weekDay = weekDays[now.getDay()];
-    const dateStr = `${month}月${day}日 ${weekDay}`;
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const timeStr = `${h}:${m}`;
 
-    // 更新锁屏时间
+    const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+    const dateStr = `${months[now.getMonth()]}${now.getDate()}日 ${days[now.getDay()]}`;
+
+    // 更新锁屏
     document.getElementById('lockTime').textContent = timeStr;
     document.getElementById('lockDateTop').textContent = dateStr;
     document.getElementById('lockStatusTime').textContent = timeStr;
-
-    // 更新主屏幕时间
+    
+    // 更新主屏幕
     document.getElementById('statusTime').textContent = timeStr;
     
     // 更新小组件
-    document.getElementById('widgetCalDay').textContent = day;
-    document.getElementById('widgetCalWeek').textContent = weekDay;
-    document.getElementById('widgetCalMonth').textContent = `${month}月`;
+    document.getElementById('widgetCalDay').textContent = now.getDate();
+    document.getElementById('widgetCalWeek').textContent = days[now.getDay()];
+    document.getElementById('widgetCalMonth').textContent = months[now.getMonth()];
 }
 
-// 初始化并每秒更新
+// 初始化运行
 updateClock();
 setInterval(updateClock, 1000);
