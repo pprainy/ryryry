@@ -185,3 +185,34 @@ body { background: #000; display: flex; justify-content: center; align-items: ce
  .sim-btn { padding:9px 11px; }
  .camera-preview { height:300px; }
 }
+
+
+/* ===== 稳定性与窄屏适配补丁（保留 upgraded 原有布局） ===== */
+html { min-height: 100%; }
+body { min-height: 100vh; min-height: 100dvh; }
+.phone-frame { flex: 0 0 auto; }
+.lock-screen { touch-action: pan-y; }
+.lock-content { touch-action: pan-y; }
+.passcode-overlay { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+.app-view { display: flex; flex-direction: column; }
+.app-header { flex: 0 0 auto; }
+.app-content { min-height: 0; flex: 1 1 auto; height: auto; }
+@media (max-height: 720px) {
+  .phone-frame { height: 100vh; height: 100dvh; }
+  .lock-content { padding-top: max(76px, 10vh); }
+  .lock-time { font-size: clamp(58px, 10vh, 82px); }
+  .lock-hint { bottom: 82px; }
+  .lock-bottom-actions { bottom: max(20px, env(safe-area-inset-bottom)); }
+  .keypad { grid-template-columns: repeat(3, 64px); gap: 10px; }
+  .key { width: 64px; height: 64px; }
+}
+@media (max-width: 420px) {
+  .phone-frame { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
+}
+
+/* Long-press icon rearrangement */
+.app-item { user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; touch-action:none; }
+.app-item.is-dragging { position:relative; z-index:30; opacity:.78; transform:scale(1.08); filter:drop-shadow(0 8px 14px #0005); }
+.reordering-apps .app-item { transition:transform .12s ease, opacity .12s ease; }
+.reordering-apps, .reordering-apps * { cursor:grabbing !important; }
+.photo-count { color:#8e8e93; font-size:13px; }
