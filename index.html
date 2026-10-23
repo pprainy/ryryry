@@ -85,7 +85,7 @@
                 </span>
             </div>
             <div class="widgets">
-                <div class="widget widget-calendar">
+                <div class="widget widget-calendar" id="widgetCalendar">
                     <div class="widget-cal-day" id="widgetCalDay">23</div>
                     <div class="widget-cal-info">
                         <span id="widgetCalWeek">星期五</span>
@@ -100,17 +100,23 @@
                     </div>
                 </div>
             </div>
-            <div class="app-grid">
-                <div class="app-item" data-app="phone"><img src="icons/icon_phone.png" alt="电话"><span>电话</span></div>
-                <div class="app-item" data-app="messages"><img src="icons/icon_messages.png" alt="信息"><span>信息</span></div>
-                <div class="app-item" data-app="mail"><img src="icons/icon_mail.png" alt="邮件"><span>邮件</span></div>
-                <div class="app-item" data-app="notes"><img src="icons/icon_notes.png" alt="备忘录"><span>备忘录</span></div>
-                <div class="app-item" data-app="camera"><img src="icons/icon_camera.png" alt="相机"><span>相机</span></div>
-                <div class="app-item" data-app="instagram"><img src="icons/icon_instagram.png" alt="Instagram"><span>Instagram</span></div>
-                <div class="app-item" data-app="browser"><img src="icons/icon_browser.png" alt="浏览器"><span>浏览器</span></div>
-                <div class="app-item" data-app="settings"><img src="icons/icon_settings.png" alt="设置"><span>设置</span></div>
+            <div class="app-grid-wrapper" id="appGridWrapper">
+                <div class="app-grid">
+                    <div class="app-item" data-app="phone"><img src="icons/icon_phone.png" alt="电话"><span>电话</span></div>
+                    <div class="app-item" data-app="messages"><img src="icons/icon_messages.png" alt="信息"><span>信息</span></div>
+                    <div class="app-item" data-app="mail"><img src="icons/icon_mail.png" alt="邮件"><span>邮件</span></div>
+                    <div class="app-item" data-app="notes"><img src="icons/icon_notes.png" alt="备忘录"><span>备忘录</span></div>
+                    <div class="app-item" data-app="camera"><img src="icons/icon_camera.png" alt="相机"><span>相机</span></div>
+                    <div class="app-item" data-app="instagram"><img src="icons/icon_instagram.png" alt="Instagram"><span>Instagram</span></div>
+                    <div class="app-item" data-app="browser"><img src="icons/icon_browser.png" alt="浏览器"><span>浏览器</span></div>
+                    <div class="app-item" data-app="settings"><img src="icons/icon_settings.png" alt="设置"><span>设置</span></div>
+                </div>
+                <div class="app-grid">
+                    <div class="app-item" data-app="kakaotalk"><img src="icons/icon_kakaotalk.png" alt="KakaoTalk"><span>KakaoTalk</span></div>
+                    <div class="app-item" data-app="x"><img src="icons/icon_x.png" alt="X"><span>X</span></div>
+                </div>
             </div>
-            <div class="page-dots">
+            <div class="page-dots" id="pageDots">
                 <span class="dot active"></span>
                 <span class="dot"></span>
             </div>
@@ -128,8 +134,26 @@
                 <button class="back-btn" id="backBtn">‹ 返回</button>
                 <span class="app-title" id="appTitle">应用</span>
             </div>
-            <div class="app-content">
+            <div class="app-content" id="appContent">
                 <p style="text-align:center; color:#999; margin-top:40vh;">这里是应用内容区域</p>
+            </div>
+        </div>
+
+        <!-- ===== 日历 App 视图 ===== -->
+        <div class="app-view" id="calendarView">
+            <div class="app-header">
+                <button class="back-btn" id="calendarBackBtn">‹ 返回</button>
+                <span class="app-title" id="calendarAppTitle">日历</span>
+            </div>
+            <div class="app-content calendar-content">
+                <div class="calendar-nav">
+                    <button class="cal-nav-btn" id="calPrevMonth">‹</button>
+                    <div class="cal-nav-title" id="calNavTitle">2026年 10月</div>
+                    <button class="cal-nav-btn" id="calNextMonth">›</button>
+                </div>
+                <button class="cal-today-btn" id="calTodayBtn">回到今天</button>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <button class="cal-add-today-btn" id="calAddTodayBtn">+ 添加今日纪念日</button>
             </div>
         </div>
     </div>
