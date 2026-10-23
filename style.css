@@ -76,37 +76,61 @@ body { background: #000; display: flex; justify-content: center; align-items: ce
 }
 .lock-action-btn svg { width: 22px; height: 22px; }
 
-/* ===== 密码键盘 (防歪斜修复) ===== */
+/* 密码遮罩层与键盘居中 */
 .passcode-overlay {
-    position: absolute; bottom: 0; width: 100%; height: 100%;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.3); backdrop-filter: blur(20px);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 30;
 }
 .passcode-overlay.show { opacity: 1; pointer-events: auto; }
-.passcode-title { color: #fff; font-size: 18px; margin-bottom: 20px; }
 
-.passcode-dots { display: flex; gap: 15px; margin-bottom: 30px; justify-content: center; }
+/* 【重点修复】密码输入框容器：强制文字居中 */
+.passcode-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 强制内部所有元素水平居中 */
+    text-align: center;
+}
+
+.passcode-title {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.passcode-dots {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
 .passcode-dots span {
     width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #fff; transition: all 0.2s;
 }
 .passcode-dots span.filled { background: #fff; }
 
-.passcode-error { color: #ff3b30; font-size: 14px; height: 20px; margin-bottom: 10px; opacity: 0; transition: opacity 0.2s; }
+.passcode-error {
+    color: #ff3b30;
+    font-size: 14px;
+    height: 20px;
+    margin-bottom: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
 .passcode-error.show { opacity: 1; }
 
-/* 核心修复：强制网格对齐与居中 */
+/* 核心修复：强制键盘等宽并居中 */
 .keypad { 
     display: grid; 
     grid-template-columns: repeat(3, 75px); 
     gap: 15px; 
-    justify-items: center; /* 强制内部所有元素居中 */
-    width: 100%;
-    max-width: 350px;
-    margin: 0 auto 20px;
+    justify-content: center; 
+    margin-bottom: 20px;
 }
 
-/* 核心修复：限制按键最大宽度，防止被删除图标撑大 */
 .key {
     width: 75px; 
     height: 75px; 
@@ -121,11 +145,10 @@ body { background: #000; display: flex; justify-content: center; align-items: ce
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 75px !important; /* 锁定最大宽度 */
 }
 .key:active { background: rgba(255,255,255,0.4); }
 .key-empty { background: transparent !important; pointer-events: none; }
-.key-delete { font-size: 20px; background: transparent !important; }
+.key-delete { font-size: 22px; background: transparent !important; }
 
 /* ===== 主屏幕样式 ===== */
 .home-bg {
