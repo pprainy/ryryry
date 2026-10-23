@@ -3,12 +3,12 @@ function updateTime() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2, '0');
     const m = String(now.getMinutes()).padStart(2, '0');
-    const timeStr = `${h}:${m}`;
-    
+    const timeStr = h + ':' + m;
+
     const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
     const days = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
-    const dateStr = `${months[now.getMonth()]}${now.getDate()}日 ${days[now.getDay()]}`;
-    
+    const dateStr = months[now.getMonth()] + now.getDate() + '日 ' + days[now.getDay()];
+
     document.getElementById('lockTime').textContent = timeStr;
     document.getElementById('lockDate').textContent = dateStr;
     document.getElementById('statusTime').textContent = timeStr;
@@ -19,7 +19,7 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 
-// ===== 锁屏交互 =====
+// ===== 锁屏交互（点击 + 上滑解锁）=====
 const lockScreen = document.getElementById('lockScreen');
 const passcodeOverlay = document.getElementById('passcodeOverlay');
 const passcodeDots = document.getElementById('passcodeDots');
@@ -32,6 +32,20 @@ const CORRECT_CODE = '1107';
 lockScreen.addEventListener('click', (e) => {
     if (!passcodeOverlay.classList.contains('show') && !e.target.closest('.key')) {
         passcodeOverlay.classList.add('show');
+    }
+});
+
+// 上滑解锁
+let startY = 0;
+lockScreen.addEventListener('touchstart', (e) => {
+    startY = e.touches[0].clientY;
+}, { passive: true });
+
+lockScreen.addEventListener('touchend', (e) => {
+    const endY = e.changedTouches[0].clientY;
+    if (startY - endY > 80 && !passcodeOverlay.classList.contains('show')) {
+        lockScreen.classList.remove('active');
+        document.getElementById('homeScreen').classList.add('active');
     }
 });
 
@@ -83,7 +97,7 @@ const appView = document.getElementById('appView');
 const appTitle = document.getElementById('appTitle');
 const appNames = {
     phone: '电话', messages: '信息', mail: '邮件', notes: '备忘录',
-    camera: '相机', instagram: 'Instagram', browser: '浏览器', settings: '设置'
+    相机: '相机', Instagram: 'Instagram', 浏览器: '浏览器', 设置: '设置'
 };
 
 document.querySelectorAll('.app-item').forEach(item => {
