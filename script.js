@@ -102,18 +102,18 @@ function initLockScreen() {
             setTimeout(function () {
                 lockScreen.classList.remove('active');
                 var home = document.getElementById('homeScreen');
-                如果 (home) 首页.类列表.添加('active');
-                如果 (passcodeOverlay) passcodeOverlay.类列表.移除('show');
-                输入代码 = '';
-                更新点();
-            }, 200);
-        } 否则 {
-            如果 (密码错误) 密码错误.类列表.添加('显示');
-            如果 (密码点阵) 密码点阵.类列表.添加('shake');
-            setTimeout(function () {
-                如果 (密码点) 密码点.类列表.移除('摇晃');
+                if (home) home.classList.add('active');
+                if (passcodeOverlay) passcodeOverlay.classList.remove('show');
                 inputCode = '';
-                更新点();
+                updateDots();
+            }, 200);
+        } else {
+            if (passcodeError) passcodeError.classList.add('show');
+            if (passcodeDots) passcodeDots.classList.add('shake');
+            setTimeout(function () {
+                if (passcodeDots) passcodeDots.classList.remove('shake');
+                inputCode = '';
+                updateDots();
             }, 500);
         }
     }
@@ -131,10 +131,10 @@ function initApps() {
         camera: '相机',
         instagram: 'Instagram',
         browser: '浏览器',
-        设置: '设置'
+        settings: '设置'
     };
 
-    如果 (!appView) 返回;
+    if (!appView) return;
 
     var appItems = document.querySelectorAll('.app-item');
     appItems.forEach(function (item) {
