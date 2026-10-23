@@ -7,7 +7,6 @@ const passcodeError = document.getElementById('passcodeError');
 const keypad = document.querySelector('.keypad');
 const appView = document.getElementById('appView');
 const appTitle = document.getElementById('appTitle');
-const appContent = document.querySelector('.app-content'); // 获取内容区域以便动态插入日历
 
 // 锁屏提示文字点击/滑动唤醒键盘
 document.querySelector('.lock-content').addEventListener('click', showPasscode);
@@ -88,131 +87,12 @@ function resetPasscode() {
     updateDots();
 }
 
-// ===== 新增：日历相关逻辑 =====
-let calendarYear = new Date().getFullYear();
-let calendarMonth = new Date().getMonth(); // 0-11
-let anniversaries = {}; // 存储纪念日数据，格式: "YYYY-MM-DD": "内容"
-
-// 左上角日历入口点击
-const calendarEntryBtn = document.getElementById('calendarEntryBtn');
-if (calendarEntryBtn) {
-    calendarEntryBtn.addEventListener('click', () => {
-        openCalendarApp();
-    });
-}
-
-function openCalendarApp() {
-    appTitle.textContent = '日历';
-    renderCalendar(calendarYear, calendarMonth);
-    appView.classList.add('open');
-}
-
-function renderCalendar(year, month) {
-    const monthsCN = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
-    const weekDays = ["日", "一", "二", "三", "四", "五", "六"];
-    
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
-    let html = `
-        <div class="calendar-header" style="display:flex; justify-content:space-between; align-items:center; padding:10px 20px;">
-            <button id="calPrev" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">‹</button>
-            <span style="font-size:18px; font-weight:bold;">${year}年 ${monthsCN[month]}</span>
-            <button id="calNext" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">›</button>
-        </div>
-        <div class="calendar-grid" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:5px; padding:10px 20px;">
-    `;
-    
-    // 表头
-    weekDays.forEach(day => {
-        html += `<div style="text-align:center; color:#888; font-size:12px; padding:5px;">${day}</div>`;
-    });
-    
-    // 空白填充
-    for (let i = 0; i < firstDay; i++) {
-        html += `<div></div>`;
-    }
-    
-    // 日期
-    const today = new Date();
-    for (let d = 1; d <= daysInMonth; d++) {
-        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-        const isToday = (d === today.getDate() && month === today.getMonth() && year === today.getFullYear());
-        const hasAnniversary = anniversaries[dateKey];
-        
-        html += `
-            <div class="cal-day-item" data-date="${dateKey}" style="
-                aspect-ratio:1; 
-                display:flex; 
-                flex-direction:column; 
-                align-items:center; 
-                justify-content:center; 
-                border-radius:50%; 
-                background:${isToday ? '#0A84FF' : 'transparent'}; 
-                color:${isToday ? '#fff' : '#fff'};
-                position:relative;
-                cursor:pointer;
-            ">
-                <span style="font-size:14px;">${d}</span>
-                ${hasAnniversary ? '<div style="width:4px; height:4px; background:#FF9F0A; border-radius:50%; margin-top:2px;"></div>' : ''}
-            </div>
-        `;
-    }
-    
-    html += `</div>`;
-    
-    // 插入内容
-    appContent.innerHTML = html;
-    
-    // 绑定切换月份事件
-    document.getElementById('calPrev').addEventListener('click', () => {
-        calendarMonth--;
-        if (calendarMonth < 0) {
-            calendarMonth = 11;
-            calendarYear--;
-        }
-        renderCalendar(calendarYear, calendarMonth);
-    });
-    
-    document.getElementById('calNext').addEventListener('click', () => {
-        calendarMonth++;
-        if (calendarMonth > 11) {
-            calendarMonth = 0;
-            calendarYear++;
-        }
-        renderCalendar(calendarYear, calendarMonth);
-    });
-    
-    // 绑定日期点击添加纪念日
-    document.querySelectorAll('.cal-day-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const date = this.dataset.date;
-            const existing = anniversaries[date] || '';
-            const input = prompt(`为 ${date} 添加/修改纪念日:`, existing);
-            if (input !== null) {
-                if (input.trim() === '') {
-                    delete anniversaries[date];
-                } else {
-                    anniversaries[date] = input;
-                }
-                renderCalendar(calendarYear, calendarMonth); // 重新渲染以更新标记
-            }
-        });
-    });
-}
-
 // 主屏幕App点击事件
 document.querySelectorAll('.app-item').forEach(item => {
     item.addEventListener('click', () => {
         const appName = item.querySelector('span')?.textContent || item.dataset.app;
-        
-        // 如果是日历入口已经在上面处理了，这里处理其他普通App
-        if (appName !== '日历') {
-            appTitle.textContent = appName;
-            // 重置内容为默认提示，除非是特定App
-            appContent.innerHTML = `<p style="text-align:center; color:#999; margin-top:40vh;">这里是 ${appName} 的内容区域</p>`;
-            appView.classList.add('open');
-        }
+        appTitle.textContent = appName;
+        appView.classList.add('open');
     });
 });
 
