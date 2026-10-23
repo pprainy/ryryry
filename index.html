@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ryryry</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- Dynamic Island -->
+        <div class="dynamic-island"></div>
+
+        <!-- ===== 锁屏 ===== -->
+        <div class="screen lock-screen active" id="lockScreen">
+            <div class="lock-bg"></div>
+            <div class="lock-content">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-time" id="lockTime">00:00</div>
+                <div class="lock-date" id="lockDate">1月1日 星期一</div>
+                <div class="lock-hint">向上滑动以解锁</div>
+            </div>
+            <!-- 密码键盘 -->
+            <div class="passcode-overlay" id="passcodeOverlay">
+                <div class="passcode-box">
+                    <div class="passcode-title">输入密码</div>
+                    <div class="passcode-dots" id="passcodeDots">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="passcode-error" id="passcodeError">密码错误</div>
+                    <div class="keypad">
+                        <button class="key" data-key="1">1</button>
+                        <button class="key" data-key="2">2</button>
+                        <button class="key" data-key="3">3</button>
+                        <button class="key" data-key="4">4</button>
+                        <button class="key" data-key="5">5</button>
+                        <button class="key" data-key="6">6</button>
+                        <button class="key" data-key="7">7</button>
+                        <button class="key" data-key="8">8</button>
+                        <button class="key" data-key="9">9</button>
+                        <button class="key key-empty"></button>
+                        <button class="key" data-key="0">0</button>
+                        <button class="key key-delete" id="keyDelete">⌫</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 主屏幕 ===== -->
+        <div class="screen home-screen" id="homeScreen">
+            <div class="home-bg"></div>
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <span class="status-time" id="statusTime">00:00</span>
+                <span class="status-icons">
+                    <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="0.5" fill="#fff"/><rect x="5" y="5" width="3" height="7" rx="0.5" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="0.5" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="0.5" fill="#fff" opacity="0.3"/></svg>
+                    <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 3.6C10.2 3.6 12.2 4.4 13.7 5.7L15 4.3C13.1 2.6 10.7 1.6 8 1.6S2.9 2.6 1 4.3L2.3 5.7C3.8 4.4 5.8 3.6 8 3.6ZM8 7.2C9.3 7.2 10.5 7.7 11.4 8.5L12.7 7.1C11.4 5.9 9.8 5.2 8 5.2S4.6 5.9 3.3 7.1L4.6 8.5C5.5 7.7 6.7 7.2 8 7.2ZM8 10.8L9.3 9.4C8.9 9.1 8.5 8.8 8 8.8S7.1 9.1 6.7 9.4L8 10.8Z" fill="#fff"/></svg>
+                    <svg width="27" height="12" viewBox="0 0 27 12"><rect x="0" y="1" width="23" height="10" rx="2" stroke="#fff" stroke-width="1" fill="none"/><rect x="24" y="4" width="2" height="4" rx="0.5" fill="#fff"/><rect x="1.5" y="2.5" width="18" height="7" rx="1" fill="#34C759"/></svg>
+                </span>
+            </div>
+            <!-- 小组件 -->
+            <div class="widgets">
+                <div class="widget widget-calendar">
+                    <div class="widget-cal-day" id="widgetCalDay">23</div>
+                    <div class="widget-cal-info">
+                        <span id="widgetCalWeek">星期五</span>
+                        <span id="widgetCalMonth">10月</span>
+                    </div>
+                </div>
+                <div class="widget widget-weather">
+                    <div class="widget-weather-icon">☀️</div>
+                    <div class="widget-weather-info">
+                        <span class="widget-temp">28°</span>
+                        <span class="widget-city">韶关</span>
+                    </div>
+                </div>
+            </div>
+            <!-- App 图标网格 -->
+            <div class="app-grid">
+                <div class="app-item" data-app="phone">
+                    <img src="icons/icon_phone.png" alt="电话">
+                    <span>电话</span>
+                </div>
+                <div class="app-item" data-app="messages">
+                    <img src="icons/icon_messages.png" alt="信息">
+                    <span>信息</span>
+                </div>
+                <div class="app-item" data-app="mail">
+                    <img src="icons/icon_mail.png" alt="邮件">
+                    <span>邮件</span>
+                </div>
+                <div class="app-item" data-app="notes">
+                    <img src="icons/icon_notes.png" alt="备忘录">
+                    <span>备忘录</span>
+                </div>
+                <div class="app-item" data-app="camera">
+                    <img src="icons/icon_camera.png" alt="相机">
+                    <span>相机</span>
+                </div>
+                <div class="app-item" data-app="instagram">
+                    <img src="icons/icon_instagram.png" alt="Instagram">
+                    <span>Instagram</span>
+                </div>
+                <div class="app-item" data-app="browser">
+                    <img src="icons/icon_browser.png" alt="浏览器">
+                    <span>浏览器</span>
+                </div>
+                <div class="app-item" data-app="settings">
+                    <img src="icons/icon_settings.png" alt="设置">
+                    <span>设置</span>
+                </div>
+            </div>
+            <!-- 页面指示器 -->
+            <div class="page-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+            </div>
+            <!-- Dock -->
+            <div class="dock">
+                <div class="app-item" data-app="phone">
+                    <img src="icons/icon_phone.png" alt="电话">
+                </div>
+                <div class="app-item" data-app="messages">
+                    <img src="icons/icon_messages.png" alt="信息">
+                </div
