@@ -1,149 +1,155 @@
-const lockScreen = document.getElementById('lockScreen');
-const homeScreen = document.getElementById('homeScreen');
-const pagesContainer = document.getElementById('pagesContainer');
-const passcodeOverlay = document.getElementById('passcodeOverlay');
-const passcodeDots = document.getElementById('passcodeDots').children;
-const passcodeError = document.getElementById('passcodeError');
-const keypad = document.querySelector('.keypad');
-const appView = document.getElementById('appView');
-const appTitle = document.getElementById('appTitle');
-const dots = document.querySelectorAll('.dot');
+(function () {
+    'use strict';
 
-// === 锁屏与键盘逻辑 ===
-document.querySelector('.lock-content').addEventListener('click', showPasscode);
-document.querySelector('.lock-hint').addEventListener('click', showPasscode);
-document.getElementById('btnFlashlight').addEventListener('click', (e) => { e.stopPropagation(); alert('手电筒'); });
-document.getElementById('btnCamera').addEventListener('click', (e) => { e.stopPropagation(); alert('相机'); });
+    /* ====== 密码 ====== */
+    const PASSCODE = '1107';
+    let entered = '';
 
-function showPasscode() { passcodeOverlay.classList.add('show'); }
-function hidePasscode() { passcodeOverlay.classList.remove('show'); resetPasscode(); }
+    /* ====== DOM ====== */
+    const lockScreen      = document.getElementById('lockScreen');
+    const homeScreen      = document.getElementById('homeScreen');
+    const passcodeOverlay = document.getElementById('passcodeOverlay');
+    const passcodeDots    = document.getElementById('passcodeDots');
+    const passcodeError   = document.getElementById('passcodeError');
+    const pagesContainer  = document.getElementById('pagesContainer');
+    const dots            = document.querySelectorAll('.dot');
+    const appView         = document.getElementById('appView');
+    const appTitle        = document.getElementById('appTitle');
+    const backBtn         = document.getElementById('backBtn');
 
-let currentPasscode = '';
-const correctPasscode = '1234';
+    /* ====== 时间 ====== */
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-keypad.addEventListener('click', (e) => {
-    if (e.target.classList.contains('key') && !e.target.classList.contains('key-empty')) {
-        if (e.target.id === 'keyDelete') {
-            currentPasscode = currentPasscode.slice(0, -1);
+    function updateTime() {
+        const now = new Date();
+        const hhmm = pad(now.getHours()) + ':' + pad(now.getMinutes());
+        const month = now.getMonth() + 1;
+        const date  = now.getDate();
+        const weekDays = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+        const week = weekDays[now.getDay()];
+
+        document.getElementById('lockStatusTime').textContent = hhmm;
+        document.getElementById('lockTime').textContent       = hhmm;
+        document.getElementById('lockDateTop').textContent    = month + '月' + date + '日 ' + week;
+        document.getElementById('statusTime').textContent     = hhmm;
+
+        document.getElementById('widgetCalDay').textContent   = date;
+        document.getElementById('widgetCalWeek').textContent  = week;
+        document.getElementById('widgetCalMonth').textContent = month + '月';
+    }
+    updateTime();
+    setInterval(updateTime, 10000);
+
+    /* ====== 锁屏上滑 ====== */
+    let startY = 0;
+    lockScreen.addEventListener('touchstart', function (e) { startY = e.touches[0].clientY; }, { passive: true });
+    lockScreen.addEventListener('touchend', function (e) {
+        const dy = startY - e.changedTouches[0].clientY;
+        if (dy > 80) {
+            passcodeOverlay.classList.add('show');
+            entered = '';
+            updateDots();
+            passcodeError.classList.remove('show');
+        }
+    }, { passive: true });
+
+    /* ====== 密码键盘 ====== */
+    function updateDots() {
+        const spans = passcodeDots.querySelectorAll('span');
+        spans.forEach(function (s, i) { s.classList.toggle('filled', i < entered.length); });
+    }
+
+    passcodeOverlay.addEventListener('click', function (e) {
+        const btn = e.target.closest('.key');
+        if (!btn) return;
+        if (btn.classList.contains('key-empty')) return;
+
+        if (btn.classList.contains('key-delete')) {
+            entered = entered.slice(0, -1);
         } else {
-            if (currentPasscode.length < 4) currentPasscode += e.target.dataset.key;
+            if (entered.length >= 4) return;
+            entered += btn.dataset.key;
         }
         updateDots();
-        if (currentPasscode.length === 4) setTimeout(checkPasscode, 200);
-    }
-});
 
-function updateDots() {
-    for (let i = 0; i < passcodeDots.length; i++) {
-        passcodeDots[i].classList.toggle('filled', i < currentPasscode.length);
-    }
-}
-
-function checkPasscode() {
-    if (currentPasscode === correctPasscode) {
-        hidePasscode();
-        lockScreen.classList.remove('active');
-        homeScreen.classList.add('active');
-    } else {
-        passcodeError.classList.add('show');
-        keypad.classList.add('shake');
-        setTimeout(() => { passcodeError.classList.remove('show'); keypad.classList.remove('shake'); resetPasscode(); }, 600);
-    }
-}
-function resetPasscode() { currentPasscode = ''; updateDots(); }
-
-// === 主屏幕翻页逻辑 (增加点击和滑动双重保障) ===
-let currentPage = 0;
-const totalPages = 2;
-
-function updatePageIndicator() {
-    // 移动容器实现翻页
-    pagesContainer.style.transform = `translateX(-${currentPage * 50}%)`; 
-    // 更新小圆点状态
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentPage);
+        if (entered.length === 4) {
+            if (entered === PASSCODE) {
+                lockScreen.classList.remove('active');
+                homeScreen.classList.add('active');
+                passcodeOverlay.classList.remove('show');
+                entered = '';
+                updateDots();
+            } else {
+                passcodeError.classList.add('show');
+                entered = '';
+                updateDots();
+                setTimeout(function () { updateDots(); passcodeError.classList.remove('show'); }, 800);
+            }
+        }
     });
-}
 
-// 点击圆点翻页
-dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-        currentPage = parseInt(dot.dataset.page);
-        updatePageIndicator();
-    });
-});
+    /* ====== 翻页 ====== */
+    let currentPage = 0;
+    const totalPages = 2;
+    let startX = 0, startY2 = 0, dragging = false;
 
-// 左右滑动翻页 (PC端鼠标兼容 + 移动端触摸兼容)
-let startX = 0;
-let isDragging = false;
+    pagesContainer.addEventListener('touchstart', function (e) {
+        startX = e.touches[0].clientX;
+        startY2 = e.touches[0].clientY;
+        dragging = true;
+        pagesContainer.style.transition = 'none';
+    }, { passive: true });
 
-const startSwipe = (x) => { startX = x; isDragging = true; };
-const endSwipe = (x) => {
-    if (!isDragging) return;
-    isDragging = false;
-    let endX = x;
-    if (startX - endX > 50 && currentPage < totalPages - 1) { // 左滑到第二页
-        currentPage++;
-        updatePageIndicator();
-    } else if (endX - startX > 50 && currentPage > 0) { // 右滑回第一页
-        currentPage--;
-        updatePageIndicator();
+    pagesContainer.addEventListener('touchmove', function (e) {
+        if (!dragging) return;
+        const dx = e.touches[0].clientX - startX;
+        const dy = Math.abs(e.touches[0].clientY - startY2);
+        if (dy > Math.abs(dx)) return;
+        const offset = -currentPage * 100 + (dx / 375) * 100;
+        pagesContainer.style.transform = 'translateX(' + offset + '%)';
+    }, { passive: true });
+
+    pagesContainer.addEventListener('touchend', function (e) {
+        if (!dragging) return;
+        dragging = false;
+        pagesContainer.style.transition = 'transform 0.35s cubic-bezier(0.25,0.8,0.25,1)';
+        const dx = e.changedTouches[0].clientX - startX;
+        if (dx < -50 && currentPage < totalPages - 1) currentPage++;
+        else if (dx > 50 && currentPage > 0) currentPage--;
+        goToPage(currentPage);
+    }, { passive: true });
+
+    function goToPage(idx) {
+        currentPage = idx;
+        pagesContainer.style.transform = 'translateX(' + (-currentPage * 100) + '%)';
+        dots.forEach(function (d, i) { d.classList.toggle('active', i === currentPage); });
     }
-};
 
-// 触摸事件
-homeScreen.addEventListener('touchstart', e => startSwipe(e.touches[0].clientX), { passive: true });
-homeScreen.addEventListener('touchend', e => endSwipe(e.changedTouches[0].clientX), { passive: true });
-
-// 鼠标事件 (方便在电脑上测试)
-homeScreen.addEventListener('mousedown', e => startSwipe(e.clientX));
-window.addEventListener('mouseup', e => endSwipe(e.clientX));
-
-
-// === 应用打开与日历绑定 ===
-function openApp(appName) {
-    appTitle.textContent = appName;
-    appView.classList.add('open');
-}
-
-document.querySelectorAll('.app-item[data-app]').forEach(item => {
-    item.addEventListener('click', () => {
-        const appName = item.querySelector('span')?.textContent || item.dataset.app;
-        openApp(appName);
+    dots.forEach(function (d) {
+        d.addEventListener('click', function () { goToPage(parseInt(d.dataset.page)); });
     });
-});
 
-// 点击左上角日期进入日历
-document.querySelector('.widget-calendar').addEventListener('click', () => {
-    openApp('日历');
-});
+    /* ====== 打开 App ====== */
+    const appNames = {
+        phone: '电话', messages: '信息', mail: '邮件', notes: '备忘录',
+        camera: '相机', instagram: 'Instagram', settings: '设置',
+        contacts: '联系人', photos: '相册', voicememos: '录音',
+        x: 'X', kakaotalk: 'KakaoTalk', xiaohongshu: '小红书',
+        calendar: '日历'
+    };
 
-document.getElementById('backBtn').addEventListener('click', () => {
-    appView.classList.remove('open');
-});
+    document.addEventListener('click', function (e) {
+        const item = e.target.closest('.app-item[data-app]');
+        if (!item) return;
+        const key = item.dataset.app;
+        if (appNames[key]) {
+            appTitle.textContent = appNames[key];
+            appView.classList.add('open');
+        }
+    });
 
-// === 时间更新 ===
-function updateClock() {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const timeStr = `${hours}:${minutes}`;
-    
-    const month = now.getMonth() + 1;
-    const day = now.getDate();
-    const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-    const weekDay = weekDays[now.getDay()];
-    const dateStr = `${month}月${day}日 ${weekDay}`;
+    backBtn.addEventListener('click', function () {
+        appView.classList.remove('open');
+    });
 
-    document.getElementById('lockTime').textContent = timeStr;
-    document.getElementById('lockDateTop').textContent = dateStr;
-    document.getElementById('lockStatusTime').textContent = timeStr;
-    document.getElementById('statusTime').textContent = timeStr;
-    
-    document.getElementById('widgetCalDay').textContent = day;
-    document.getElementById('widgetCalWeek').textContent = weekDay;
-    document.getElementById('widgetCalMonth').textContent = `${month}月`;
-}
-
-updateClock();
-setInterval(updateClock, 1000);
+})();
