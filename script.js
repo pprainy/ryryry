@@ -28,7 +28,7 @@ function updateTime() {
     if (widgetCalMonth) widgetCalMonth.textContent = months[now.getMonth()];
 }
 
-// ===== 锁屏交互（点击 + 上滑解锁）=====
+// ===== 锁屏交互（点击/上滑 -> 弹密码盘 -> 验证解锁）=====
 function initLockScreen() {
     const lockScreen = document.getElementById('lockScreen');
     const passcodeOverlay = document.getElementById('passcodeOverlay');
@@ -40,18 +40,24 @@ function initLockScreen() {
 
     if (!lockScreen) return;
 
-    // 点击锁屏显示密码键盘
-    lockScreen.addEventListener('click', function (e) {
-        if (
-            passcodeOverlay &&
-            !passcodeOverlay.classList.contains('show') &&
-            !e.target.closest('.key')
-        ) {
+    // 显示密码键盘的通用函数
+    function showPasscode() {
+        if (passcodeOverlay && !passcodeOverlay.classList.contains('show')) {
             passcodeOverlay.classList.add('show');
+            inputCode = '';
+            updateDots();
+            if (passcodeError) passcodeError.classList.remove('show');
         }
+    }
+
+    // 1. 点击锁屏任意位置 -> 弹出密码键盘
+    lockScreen.addEventListener('click', function (e) {
+        // 如果点击的是键盘按键本身或密码遮罩层内部，不重复触发
+        if (e.target.closest('.key') || e.target.closest('#passcodeOverlay')) return;
+        showPasscode();
     });
 
-    // 上滑解锁
+    // 2. 上滑操作 -> 同样只弹出密码键盘，不再直接解锁
     let startY = 0;
     lockScreen.addEventListener('touchstart', function (e) {
         startY = e.touches[0].clientY;
@@ -59,17 +65,17 @@ function initLockScreen() {
 
     lockScreen.addEventListener('touchend', function (e) {
         const endY = e.changedTouches[0].clientY;
-        if (startY - endY > 80 && (!passcodeOverlay || !passcodeOverlay.classList.contains('show'))) {
-            lockScreen.classList.remove('active');
-            var home = document.getElementById('homeScreen');
-            if (home) home.classList.add('active');
+        // 向上滑动超过 50px 才触发
+        if (startY - endY > 50) {
+            showPasscode();
         }
     });
 
-    // 键盘输入
+    // 3. 键盘数字输入
     var keys = document.querySelectorAll('.key[data-key]');
     keys.forEach(function (key) {
-        key.addEventListener('click', function () {
+        key.addEventListener('click', function (e) {
+            e.stopPropagation(); // 防止冒泡触发锁屏点击事件
             if (inputCode.length < 4) {
                 inputCode += key.getAttribute('data-key');
                 updateDots();
@@ -78,15 +84,18 @@ function initLockScreen() {
         });
     });
 
+    // 4. 删除键
     var keyDelete = document.getElementById('keyDelete');
     if (keyDelete) {
-        keyDelete.addEventListener('click', function () {
+        keyDelete.addEventListener('click', function (e) {
+            e.stopPropagation();
             inputCode = inputCode.slice(0, -1);
             updateDots();
             if (passcodeError) passcodeError.classList.remove('show');
         });
     }
 
+    // 更新密码点状态
     function updateDots() {
         dots.forEach(function (dot, i) {
             if (i < inputCode.length) {
@@ -97,8 +106,10 @@ function initLockScreen() {
         });
     }
 
+    // 5. 核心：密码验证逻辑
     function checkPasscode() {
         if (inputCode === CORRECT_CODE) {
+            // 密码正确 -> 解锁并进入桌面
             setTimeout(function () {
                 lockScreen.classList.remove('active');
                 var home = document.getElementById('homeScreen');
@@ -108,6 +119,7 @@ function initLockScreen() {
                 updateDots();
             }, 200);
         } else {
+            // 密码错误 -> 震动提示并清空
             if (passcodeError) passcodeError.classList.add('show');
             if (passcodeDots) passcodeDots.classList.add('shake');
             setTimeout(function () {
