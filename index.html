@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ryryry</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -122,4 +122,29 @@
                 </div>
                 <div class="app-item" data-app="messages">
                     <img src="icons/icon_messages.png" alt="信息">
-                </div
+                </div>
+                <div class="app-item" data-app="browser">
+                    <img src="icons/icon_browser.png" alt="浏览器">
+                </div>
+                <div class="app-item" data-app="camera">
+                    <img src="icons/icon_camera.png" alt="相机">
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== App 全屏视图 ===== -->
+        <div class="app-view" id="appView">
+            <div class="app-header">
+                <button class="back-btn" id="backBtn">‹ 返回</button>
+                <span class="app-title" id="appTitle">应用</span>
+            </div>
+            <div class="app-content">
+                <p style="text-align:center; color:#999; margin-top:40vh;">这里是应用内容区域</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⭐ 核心修复：加载 JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
